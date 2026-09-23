@@ -1,0 +1,56 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cpu-and-feature-builds:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            label: linux-x64
+          - os: windows-2022
+            label: windows-x64
+          - os: macos-15
+            label: macos-arm64
+          - os: macos-15-intel
+            label: macos-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fetch --locked
+      - run: cargo fmt --all -- --check
+      - run: python3 tools/verify_kernel_math.py
+        if: runner.os != 'Windows'
+      - run: cargo test --locked --offline --no-default-features
+      - run: cargo build --locked --offline --release --no-default-features
+      # Runtime GPU loaders mean no GPU SDK is required to compile optional features.
+      # Hardware tests are explicitly ignored on generic hosted runners.
+      - run: cargo test --locked --offline --all-features
+      - run: cargo clippy --locked --offline --all-targets --all-features -- -D warnings
+      # Build a CPU-only download with the same UI on every platform. Only an
+      # explicit allowlist is packaged; generated keys/results are never included.
+      - run: python3 tools/package_release.py --label ${{ matrix.label }}
+        if: runner.os != 'Windows'
+      - run: python tools/package_release.py --label ${{ matrix.label }}
+        if: runner.os == 'Windows'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: vanity-generator-${{ matrix.label }}
+          path: dist/vanity-generator-${{ matrix.label }}.*
+          if-no-files-found: error
+  minimum-rust:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.85.0'
+      - run: cargo test --locked --no-default-features

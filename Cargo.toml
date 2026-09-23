@@ -1,0 +1,51 @@
+[package]
+name = "bitcoin-vanity"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Offline multichain vanity address generator"
+license = "MIT"
+repository = "https://github.com/Brons0n/crypto-vanity"
+
+[[bin]]
+name = "vanitybtc"
+path = "src/main.rs"
+
+[features]
+default = []
+gpu-opencl = ["dep:opencl3"]
+gpu-metal = ["dep:objc2-metal", "dep:objc2", "dep:objc2-foundation"]
+
+[dependencies]
+opencl3 = { version = "0.12", default-features = false, features = ["dynamic"], optional = true }
+anyhow = "1.0"
+anstream = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+secp256k1 = "0.31.1"
+getrandom = "0.3"
+sha2 = "0.10"
+sha3 = "0.10"
+ed25519-dalek = { version = "2.2", features = ["zeroize"] }
+ripemd = "0.1"
+bs58 = "0.5"
+bech32 = "0.11"
+zeroize = "1.8"
+ctrlc = "3.4"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = { version = "0.6", optional = true }
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSError", "NSString", "NSObject"], optional = true }
+objc2-metal = { version = "0.3", default-features = false, features = [
+    "std", "MTLAllocation", "MTLBuffer", "MTLCommandBuffer", "MTLCommandEncoder",
+    "MTLCommandQueue", "MTLComputeCommandEncoder", "MTLComputePipeline", "MTLDevice",
+    "MTLLibrary", "MTLResource", "MTLTypes",
+], optional = true }
+
+[dev-dependencies]
+bitcoin = "0.32"
+tiny-keccak = { version = "2.0", features = ["keccak"] }
+ring = "0.17"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
