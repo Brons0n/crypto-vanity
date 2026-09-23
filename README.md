@@ -2,6 +2,8 @@
 
 Free and open-source under the [MIT License](LICENSE). You can use, modify, and redistribute it, including commercially, under that license.
 
+**[Download the latest release](https://github.com/Brons0n/crypto-vanity/releases/latest)** for Windows x64, Linux x64, macOS Apple Silicon, or macOS Intel. Extract the archive and use the included launcher; no Rust installation is required. Choose Apple Silicon for M-series Macs and Intel for older Intel Macs. Release downloads use the CPU and include all eight networks.
+
 An offline Rust CLI, `vanitybtc`, for finding **Bitcoin, Ethereum, Solana, BNB Smart Chain, XRP, TRON, Dogecoin, and Litecoin** vanity addresses. It supports **macOS on Apple Silicon and Intel**, Windows, and Linux from one Rust codebase. The executable name stays `vanitybtc` for compatibility.
 
 | Chain | Select | Address | Private material printed on a match |

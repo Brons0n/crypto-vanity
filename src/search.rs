@@ -64,30 +64,30 @@ pub fn format_result(
                 writeln!(
                     output,
                     "Private key (WIF compressed): {}",
-                    &*address::wif_with_version(&c.secret, version)
+                    *address::wif_with_version(&c.secret, version)
                 )?;
             }
-            writeln!(output, "Private key (hex): {}", &*address::hex(&*c.secret))?;
+            writeln!(output, "Private key (hex): {}", *address::hex(&*c.secret))?;
             if pattern.kind == AddressType::Xrp {
                 // XRPL keypair APIs mark a direct secp256k1 secret with a 00 byte.
                 // This is not an XRPL family seed and must not be labeled as one.
                 writeln!(
                     output,
                     "Private key (XRPL hex): 00{}",
-                    &*address::hex(&*c.secret)
+                    *address::hex(&*c.secret)
                 )?;
             }
             if pattern.kind.is_evm() || pattern.kind == AddressType::Tron {
                 writeln!(
                     output,
                     "Public key (hex uncompressed): {}",
-                    &*address::hex(&c.public.serialize_uncompressed())
+                    *address::hex(&c.public.serialize_uncompressed())
                 )?;
             } else {
                 writeln!(
                     output,
                     "Public key (hex compressed): {}",
-                    &*address::hex(&c.public.serialize())
+                    *address::hex(&c.public.serialize())
                 )?;
             }
         }
@@ -100,13 +100,13 @@ pub fn format_result(
             writeln!(
                 output,
                 "Private seed (hex, 32 bytes): {}",
-                &*address::hex(&*c.seed)
+                *address::hex(&*c.seed)
             )?;
-            writeln!(output, "Private key (base58, 64 bytes): {}", &*encoded)?;
+            writeln!(output, "Private key (base58, 64 bytes): {}", *encoded)?;
             writeln!(
                 output,
                 "Public key (hex Ed25519): {}",
-                &*address::hex(&c.public)
+                *address::hex(&c.public)
             )?;
         }
     }
